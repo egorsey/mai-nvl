@@ -780,12 +780,7 @@
         html += < div class = "buttons-container" > ;
         if (step.options && step.options.length > 0) {
           step.options.forEach(opt => {
-            html += < button class =
-              "btn ${opt.text.includes('🚨') || opt.text.includes('критический') ? 'btn-danger' : ''} ${opt.text.includes('⚠️') ? 'btn-warning' : ''}"
-            onclick =
-              "selectOption('${opt.next}', '${step.history || ''}')" > $ {
-                opt.text
-              } < /button>;
+            html += `<button class="btn ${btnClass}" onclick="selectStep('${opt.next}', '${step.title}')">${opt.text}</button>`;
           });
         } else {
           html += < p style =
@@ -796,50 +791,6 @@
         card.innerHTML = html;
       }
 
-      function selectOption(nextStep, historyText) {
-        if (historyText && !pathHistory.includes(historyText)) {
-          pathHistory.push(historyText);
-        }
-        // Специальный хак для первой ветки (добавление в историю Невы/Юбилейного)
-        if (currentStep === 'start') {
-          if (nextStep === 'neva_main') pathHistory = ["НЕВА"];
-          if (nextStep === 'jub_main') pathHistory = ["ЮБИЛЕЙНЫЙ"];
-        }
-        currentStep = nextStep;
-        renderStep();
-      }
-
-      function goBack() {
-        if (currentStep === 'start') return;
-        // Поиск родительского шага
-        let parentStep = 'start';
-        for (let key in database) {
-          if (database[key].options) {
-            const hasChild = database[key].options.some(o => optToKey(o
-              .next) === currentStep);
-            if (hasChild) {
-              parentStep = key;
-              break;
-            }
-          }
-        }
-        if (parentStep === 'start') {
-          pathHistory = [];
-        } else {
-          pathHistory.pop();
-        }
-        currentStep = parentStep;
-        renderStep();
-      }
-
-      function optToKey(next) {
-        return next;
-      }
-
-      function resetFlow() {
-        currentStep = 'start';
-        pathHistory = [];
-        renderStep();
-      }
+      
       // Запуск приложения
       renderStep();
